@@ -24,8 +24,9 @@ services:
       sizeGB: 1
 
   # Frontend Static Site
-  - type: static
+  - type: web
     name: journitag-frontend
+    runtime: static
     region: oregon
     buildCommand: "cd frontend && npm install && npm run build"
     staticPublishPath: frontend/dist
