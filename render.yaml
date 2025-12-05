@@ -13,21 +13,17 @@ services:
       - key: FLASK_APP
         value: app
       - key: DATABASE_FILENAME
-        value: /opt/render/project/src/backend/sql/greetings.db
+        value: sql/greetings.db
       - key: FRONTEND_URL
         sync: false  # Set this to your frontend URL after deployment (e.g., https://journitag-frontend.onrender.com)
       - key: SECRET_KEY
         generateValue: true  # Automatically generates a secure random secret key
-    disk:
-      name: journitag-db
-      mountPath: /opt/render/project/src/backend/sql
-      sizeGB: 1
+    # NOTE: SQLite database is ephemeral on free tier - data resets on each deployment
 
   # Frontend Static Site
   - type: web
     name: journitag-frontend
     runtime: static
-    region: oregon
     buildCommand: "cd frontend && npm install && npm run build"
     staticPublishPath: frontend/dist
     envVars:
