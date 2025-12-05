@@ -10,8 +10,13 @@ mkdir -p sql uploads/photos
 
 echo "Initializing database..."
 if [ ! -f "sql/greetings.db" ]; then
-    echo "Creating new database..."
-    python -c "from app import db; db.create_all()"
+    echo "Creating new database from SQL files..."
+    sqlite3 sql/greetings.db < sql/schema.sql
+    sqlite3 sql/greetings.db < sql/data.sql
+    sqlite3 sql/greetings.db < sql/add_auth.sql
+    sqlite3 sql/greetings.db < sql/add_access_control.sql
+    sqlite3 sql/greetings.db < sql/add_friend_requests.sql
+    echo "Database created successfully!"
 else
     echo "Database already exists, skipping creation..."
 fi
