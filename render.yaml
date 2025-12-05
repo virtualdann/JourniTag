@@ -1,0 +1,40 @@
+services:
+  # Backend API Service
+  - type: web
+    name: journitag-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: "cd backend && chmod +x build.sh && ./build.sh"
+    startCommand: "cd backend && gunicorn -w 4 -b 0.0.0.0:$PORT 'app:app'"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FLASK_APP
+        value: app
+      - key: DATABASE_FILENAME
+        value: /opt/render/project/src/backend/sql/greetings.db
+      - key: FRONTEND_URL
+        sync: false  # Set this to your frontend URL after deployment (e.g., https://journitag-frontend.onrender.com)
+      - key: SECRET_KEY
+        generateValue: true  # Automatically generates a secure random secret key
+    disk:
+      name: journitag-db
+      mountPath: /opt/render/project/src/backend/sql
+      sizeGB: 1
+
+  # Frontend Static Site
+  - type: static
+    name: journitag-frontend
+    region: oregon
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: NODE_VERSION
+        value: 18.18.0
+      - key: VITE_API_URL
+        sync: false  # Set this to your backend URL after deployment (e.g., https://journitag-backend.onrender.com/api)
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
